@@ -13,12 +13,12 @@
         <div v-if="numPeople > 0">
             <div style="display: inline-block; margin-left: 16px">
                 <h2 style="display: inline-block">Tổng tiền nhà</h2>
-                <el-input v-model="sumMoney" class="inp" size="medium"></el-input>
+                <el-input v-model="sumMoney" class="inp" size="medium" clearable></el-input>
                 <div style="display: inline-block; margin-left: 38px" v-if="countPeopleStayNotFullDay > 0">
                     <h2 style="display: inline-block">Tiền điện</h2>
-                    <el-input class="inp" size="medium" v-model="electricBill"></el-input>
+                    <el-input class="inp" size="medium" v-model="electricBill" clearable></el-input>
                     <h2 style="display: inline-block; margin-left: 32px">Tiền nước</h2>
-                    <el-input class="inp" size="medium" v-model="waterBill"></el-input>
+                    <el-input class="inp" size="medium" v-model="waterBill" clearable></el-input>
                 </div>
             </div>
 
@@ -32,8 +32,10 @@
             <div>
                 <h2 style="display: inline-block; margin-left: 40px">Thời gian ở</h2>
                 <li style="display: inline-block" v-for="person in people" :key="person.id">
-                    <el-select v-model="person.timeStay" class="inp" v-on:change="change(person.timeStay)">
-                        <el-option v-for="value in timeStays" :key="value" :label="value" :value="value">
+                    <el-select v-model="person.timeStay" class="inp"
+                               v-on:change="changePersonStayNotFullDay(person.timeStay)">
+                        <el-option v-for="value in timeStays" :key="value.name" :label="value.name"
+                                   :value="value.value">
                         </el-option>
                     </el-select>
                 </li>
@@ -43,7 +45,7 @@
             <div>
                 <h2 style="display: inline-block; margin-left: -1px">Số tiền đã bỏ ra</h2>
                 <li style="display: inline-block" v-for="person in people" :key="person.id">
-                    <el-input v-model="person.moneySpent" class="inp" size="medium"></el-input>
+                    <el-input v-model="person.moneySpent" class="inp" size="medium" clearable></el-input>
                 </li>
             </div>
 
@@ -71,7 +73,28 @@
                 people: [],
                 sumMoney: null,
                 countPeopleStayNotFullDay: 0,
-                timeStays: ['Full', '3 tuần', '2 tuần', '1 tuần', '0'],
+                timeStays: [
+                    {
+                        name: 'Full',
+                        value: 30
+                    },
+                    {
+                        name: '3 tuần',
+                        value: 21
+                    },
+                    {
+                        name: '2 tuần',
+                        value: 14
+                    },
+                    {
+                        name: '1 tuần',
+                        value: 7
+                    },
+                    {
+                        name: '0',
+                        value: 0
+                    },
+                ],
                 electricBill: null,
                 waterBill: null,
                 computedClick: false
@@ -90,10 +113,11 @@
                     const electricBill = Number(this.electricBill);
                     const waterBill = Number(this.waterBill);
                     const motelMoneyPerOne = (sumMoney - electricBill - waterBill) / length;
-                    const electricWaterBillPerDay = (electricBill + waterBill) / (30 * length);
+                    const sumDay = this.sumDayAllPeopleStay(people);
+                    const electricWaterBillPerDay = (electricBill + waterBill) / sumDay;
 
                     for (let i = 0; i < length; i++) {
-                        const dayStay = this.getTimeStay(people[i].timeStay);
+                        const dayStay = people[i].timeStay;
                         this.people[i].lastMoney = Math.round(motelMoneyPerOne + electricWaterBillPerDay * dayStay - people[i].moneySpent);
                     }
                 } else {
@@ -102,23 +126,14 @@
                         this.people[i].lastMoney = Math.round(moneyPerOne - people[i].moneySpent);
                     }
                 }
-
             },
-            getTimeStay(timeStay) {
-                if (timeStay === this.timeStays[0]) {
-                    return 30;
-                } else if (timeStay === this.timeStays[1]) {
-                    return 21;
-                } else if (timeStay === this.timeStays[2]) {
-                    return 14;
-                } else if (timeStay === this.timeStays[3]) {
-                    return 7;
-                } else {
-                    return 0;
-                }
+            sumDayAllPeopleStay(people) {
+                let sumDay = 0;
+                people.forEach(person => (sumDay += person.timeStay));
+                return sumDay;
             },
-            change(value) {
-                if (value != 'Full') {
+            changePersonStayNotFullDay(value) {
+                if (value !== 30) {
                     this.countPeopleStayNotFullDay++;
                 } else {
                     this.countPeopleStayNotFullDay--;
@@ -133,7 +148,7 @@
                     id: this.numPeople,
                     name: this.createNamePerson(),
                     moneySpent: null,
-                    timeStay: 'Full',
+                    timeStay: 30,
                     lastMoney: 0
                 }
                 this.people.push(person);

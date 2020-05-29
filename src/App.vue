@@ -1,7 +1,7 @@
 <template>
     <div id="app">
         <Header/>
-        <ComputedMoney style="margin-left: 200px; margin-top: 10px"/>
+        <ComputedMoney style="margin-left: 350px; margin-top: 50px"/>
     </div>
 </template>
 
@@ -12,7 +12,7 @@
 
     export default {
         name: 'App',
-        components: {ComputedMoney,Header}
+        components: {ComputedMoney, Header}
     }
 </script>
 

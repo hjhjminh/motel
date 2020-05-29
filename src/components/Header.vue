@@ -24,9 +24,9 @@
     #header {
     }
     .imgHomePage {
-        width: 100px;
-        height: 100px;
-        margin-left: 100px;
+        width: 150px;
+        height: 150px;
+        margin-left: 150px;
         margin-top: 5px;
     }
 </style>
