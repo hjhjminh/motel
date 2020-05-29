@@ -115,7 +115,6 @@
                     const motelMoneyPerOne = (sumMoney - electricBill - waterBill) / length;
                     const sumDay = this.sumDayAllPeopleStay(people);
                     const electricWaterBillPerDay = (electricBill + waterBill) / sumDay;
-
                     for (let i = 0; i < length; i++) {
                         const dayStay = people[i].timeStay;
                         this.people[i].lastMoney = Math.round(motelMoneyPerOne + electricWaterBillPerDay * dayStay - people[i].moneySpent);
